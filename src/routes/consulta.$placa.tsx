@@ -170,10 +170,28 @@ function ConsultaPage() {
     );
   }
 
-  return <ReportView report={report!} />;
+  if (erro || !resposta) {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl px-4 py-24 text-center">
+          <AlertTriangle className="mx-auto size-8 text-danger" />
+          <h1 className="mt-4 text-2xl font-bold">Não foi possível concluir a consulta</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{erro}</p>
+          <Link
+            to="/"
+            className="mt-6 inline-block rounded-lg bg-neon px-5 py-3 text-sm font-bold text-neon-foreground uppercase"
+          >
+            Voltar ao início
+          </Link>
+        </div>
+      </PageShell>
+    );
+  }
+
+  return <ReportView report={resposta.report} resposta={resposta} />;
 }
 
-function ReportView({ report }: { report: VehicleReport }) {
+function ReportView({ report, resposta }: { report: VehicleReport; resposta: ConsultaResposta }) {
   const band = scoreBand(report.score.value);
   const created = new Date(report.createdAt);
 
