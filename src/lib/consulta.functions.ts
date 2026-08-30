@@ -83,7 +83,7 @@ export const consultarPlaca = createServerFn({ method: "POST" })
       fonte: resposta.fonte,
       provedor: resposta.provedor,
       custo_centavos: custo,
-      relatorio: resposta.report as unknown as Record<string, unknown>,
+      relatorio: JSON.parse(JSON.stringify(resposta.report)),
       erro: resposta.aviso,
     });
 
