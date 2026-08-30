@@ -15,7 +15,9 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as LojistasRouteImport } from './routes/lojistas'
 import { Route as OQueConsultamosRouteImport } from './routes/o-que-consultamos'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as ConsultaPlacaRouteImport } from './routes/consulta.$placa'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
+import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,9 +49,19 @@ const PlanosRoute = PlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConsultaPlacaRoute = ConsultaPlacaRouteImport.update({
+  id: '/consulta/$placa',
+  path: '/consulta/$placa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalDocRoute = LegalDocRouteImport.update({
   id: '/legal/$doc',
   path: '/legal/$doc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerificarCodigoRoute = VerificarCodigoRouteImport.update({
+  id: '/verificar/$codigo',
+  path: '/verificar/$codigo',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -60,7 +72,9 @@ export interface FileRoutesByFullPath {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +83,9 @@ export interface FileRoutesByTo {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +95,9 @@ export interface FileRoutesById {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +108,9 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/consulta/$placa'
     | '/legal/$doc'
+    | '/verificar/$codigo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +119,9 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/consulta/$placa'
     | '/legal/$doc'
+    | '/verificar/$codigo'
   id:
     | '__root__'
     | '/'
@@ -108,7 +130,9 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/consulta/$placa'
     | '/legal/$doc'
+    | '/verificar/$codigo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +142,9 @@ export interface RootRouteChildren {
   LojistasRoute: typeof LojistasRoute
   OQueConsultamosRoute: typeof OQueConsultamosRoute
   PlanosRoute: typeof PlanosRoute
+  ConsultaPlacaRoute: typeof ConsultaPlacaRoute
   LegalDocRoute: typeof LegalDocRoute
+  VerificarCodigoRoute: typeof VerificarCodigoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,11 +191,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/consulta/$placa': {
+      id: '/consulta/$placa'
+      path: '/consulta/$placa'
+      fullPath: '/consulta/$placa'
+      preLoaderRoute: typeof ConsultaPlacaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/$doc': {
       id: '/legal/$doc'
       path: '/legal/$doc'
       fullPath: '/legal/$doc'
       preLoaderRoute: typeof LegalDocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verificar/$codigo': {
+      id: '/verificar/$codigo'
+      path: '/verificar/$codigo'
+      fullPath: '/verificar/$codigo'
+      preLoaderRoute: typeof VerificarCodigoRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -182,7 +222,9 @@ const rootRouteChildren: RootRouteChildren = {
   LojistasRoute: LojistasRoute,
   OQueConsultamosRoute: OQueConsultamosRoute,
   PlanosRoute: PlanosRoute,
+  ConsultaPlacaRoute: ConsultaPlacaRoute,
   LegalDocRoute: LegalDocRoute,
+  VerificarCodigoRoute: VerificarCodigoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
