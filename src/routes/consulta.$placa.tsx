@@ -198,6 +198,17 @@ function ReportView({ report, resposta }: { report: VehicleReport; resposta: Con
   return (
     <PageShell>
       <div className="mx-auto max-w-5xl px-4 py-10">
+        {resposta.fonte === "real" ? (
+          <div className="mb-6 flex items-center gap-2 rounded-xl border border-success/30 bg-success/5 px-4 py-3 text-sm text-success">
+            <ShieldCheck className="size-4" /> Dados reais obtidos do provedor licenciado{" "}
+            <strong className="font-semibold">{resposta.provedor}</strong>.
+          </div>
+        ) : (
+          <div className="mb-6 flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/5 px-4 py-3 text-sm text-warning">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>{resposta.aviso}</span>
+          </div>
+        )}
         <div className="panel mb-6 flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs tracking-[0.25em] text-gold uppercase">Consulta veicular</p>
