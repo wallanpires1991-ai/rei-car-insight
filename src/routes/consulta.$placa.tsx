@@ -130,8 +130,8 @@ function ConsultaPage() {
               Fazer consulta completa — R$49,90
             </button>
             <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. Pagamento e login reais serão
-              ativados com o backend seguro — este é um relatório de demonstração.
+              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. A consulta é registrada no
+              seu histórico e validada por código único.
             </p>
           </div>
         </div>
