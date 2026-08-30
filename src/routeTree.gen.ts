@@ -16,6 +16,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as LojistasRouteImport } from './routes/lojistas'
 import { Route as OQueConsultamosRouteImport } from './routes/o-que-consultamos'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedMinhasConsultasRouteImport } from './routes/_authenticated/minhas-consultas'
 import { Route as ConsultaPlacaRouteImport } from './routes/consulta.$placa'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
@@ -55,6 +56,11 @@ const PlanosRoute = PlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMinhasConsultasRoute =
   AuthenticatedMinhasConsultasRouteImport.update({
     id: '/minhas-consultas',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/admin'
     | '/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/admin'
     | '/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/_authenticated/admin'
     | '/_authenticated/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/minhas-consultas': {
       id: '/_authenticated/minhas-consultas'
       path: '/minhas-consultas'
@@ -251,10 +270,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedMinhasConsultasRoute: typeof AuthenticatedMinhasConsultasRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedMinhasConsultasRoute: AuthenticatedMinhasConsultasRoute,
 }
 
