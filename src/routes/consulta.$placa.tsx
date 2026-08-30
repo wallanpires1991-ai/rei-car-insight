@@ -12,11 +12,13 @@ import {
   Siren,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { PageShell } from "@/components/site/PageShell";
 import { DataGrid, ReportSection, SeverityPill, toneClasses } from "@/components/report/ui";
 import { formatPlate, isValidPlate, normalizePlate } from "@/lib/plate";
-import { buildDemoReport, scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
+import { scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
+import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions";
 
 export const Route = createFileRoute("/consulta/$placa")({
   head: ({ params }) => {
