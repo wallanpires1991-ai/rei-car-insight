@@ -12,11 +12,13 @@ import {
   Siren,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { PageShell } from "@/components/site/PageShell";
 import { DataGrid, ReportSection, SeverityPill, toneClasses } from "@/components/report/ui";
 import { formatPlate, isValidPlate, normalizePlate } from "@/lib/plate";
-import { buildDemoReport, scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
+import { scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
+import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions";
 
 export const Route = createFileRoute("/consulta/$placa")({
   head: ({ params }) => {
@@ -55,18 +57,36 @@ function ConsultaPage() {
 
   const [stage, setStage] = useState<Stage>("paywall");
   const [step, setStep] = useState(0);
+  const [resposta, setResposta] = useState<ConsultaResposta | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
 
-  const report = useMemo(() => (valid ? buildDemoReport(plate) : null), [plate, valid]);
+  const consultar = useServerFn(consultarPlaca);
 
   useEffect(() => {
     if (stage !== "loading") return;
-    if (step >= STEPS.length) {
-      const t = setTimeout(() => setStage("done"), 500);
-      return () => clearTimeout(t);
-    }
+    if (step >= STEPS.length) return;
     const t = setTimeout(() => setStep((s) => s + 1), 600);
     return () => clearTimeout(t);
   }, [stage, step]);
+
+  useEffect(() => {
+    if (stage !== "loading" || resposta || erro) return;
+    let cancelled = false;
+    consultar({ data: { placa: plate } })
+      .then((r) => {
+        if (!cancelled) setResposta(r);
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setErro(e instanceof Error ? e.message : "Falha ao consultar.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, plate, consultar, resposta, erro]);
+
+  useEffect(() => {
+    if (stage === "loading" && resposta && step >= STEPS.length) setStage("done");
+  }, [stage, resposta, step]);
 
   if (!valid) {
     return (
@@ -110,8 +130,8 @@ function ConsultaPage() {
               Fazer consulta completa — R$49,90
             </button>
             <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. Pagamento e login reais serão
-              ativados com o backend seguro — este é um relatório de demonstração.
+              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. A consulta é registrada no
+              seu histórico e validada por código único.
             </p>
           </div>
         </div>
@@ -150,16 +170,45 @@ function ConsultaPage() {
     );
   }
 
-  return <ReportView report={report!} />;
+  if (erro || !resposta) {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl px-4 py-24 text-center">
+          <AlertTriangle className="mx-auto size-8 text-danger" />
+          <h1 className="mt-4 text-2xl font-bold">Não foi possível concluir a consulta</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{erro}</p>
+          <Link
+            to="/"
+            className="mt-6 inline-block rounded-lg bg-neon px-5 py-3 text-sm font-bold text-neon-foreground uppercase"
+          >
+            Voltar ao início
+          </Link>
+        </div>
+      </PageShell>
+    );
+  }
+
+  return <ReportView report={resposta.report} resposta={resposta} />;
 }
 
-function ReportView({ report }: { report: VehicleReport }) {
+function ReportView({ report, resposta }: { report: VehicleReport; resposta: ConsultaResposta }) {
   const band = scoreBand(report.score.value);
   const created = new Date(report.createdAt);
 
   return (
     <PageShell>
       <div className="mx-auto max-w-5xl px-4 py-10">
+        {resposta.fonte === "real" ? (
+          <div className="mb-6 flex items-center gap-2 rounded-xl border border-success/30 bg-success/5 px-4 py-3 text-sm text-success">
+            <ShieldCheck className="size-4" /> Dados reais obtidos do provedor licenciado{" "}
+            <strong className="font-semibold">{resposta.provedor}</strong>.
+          </div>
+        ) : (
+          <div className="mb-6 flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/5 px-4 py-3 text-sm text-warning">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>{resposta.aviso}</span>
+          </div>
+        )}
         <div className="panel mb-6 flex flex-col gap-5 p-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs tracking-[0.25em] text-gold uppercase">Consulta veicular</p>
@@ -218,6 +267,9 @@ function ReportView({ report }: { report: VehicleReport }) {
           </ReportSection>
 
           <ReportSection index={3} title="Histórico do veículo">
+            {report.history.length === 0 && (
+              <p className="text-sm text-muted-foreground/70 italic">{UNAVAILABLE}</p>
+            )}
             <ul className="space-y-4">
               {report.history.map((h) => (
                 <li key={h.title} className="border-l-2 border-primary/40 pl-4">

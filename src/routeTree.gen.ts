@@ -10,11 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as LojistasRouteImport } from './routes/lojistas'
 import { Route as OQueConsultamosRouteImport } from './routes/o-que-consultamos'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedMinhasConsultasRouteImport } from './routes/_authenticated/minhas-consultas'
 import { Route as ConsultaPlacaRouteImport } from './routes/consulta.$placa'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
@@ -22,6 +25,10 @@ import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
@@ -49,6 +56,17 @@ const PlanosRoute = PlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMinhasConsultasRoute =
+  AuthenticatedMinhasConsultasRouteImport.update({
+    id: '/minhas-consultas',
+    path: '/minhas-consultas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ConsultaPlacaRoute = ConsultaPlacaRouteImport.update({
   id: '/consulta/$placa',
   path: '/consulta/$placa',
@@ -72,6 +90,8 @@ export interface FileRoutesByFullPath {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
@@ -83,6 +103,8 @@ export interface FileRoutesByTo {
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
@@ -90,11 +112,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/como-funciona': typeof ComoFuncionaRoute
   '/entrar': typeof EntrarRoute
   '/lojistas': typeof LojistasRoute
   '/o-que-consultamos': typeof OQueConsultamosRoute
   '/planos': typeof PlanosRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/minhas-consultas': typeof AuthenticatedMinhasConsultasRoute
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
@@ -108,6 +133,8 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/admin'
+    | '/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
@@ -119,17 +146,22 @@ export interface FileRouteTypes {
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/admin'
+    | '/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/como-funciona'
     | '/entrar'
     | '/lojistas'
     | '/o-que-consultamos'
     | '/planos'
+    | '/_authenticated/admin'
+    | '/_authenticated/minhas-consultas'
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
@@ -137,6 +169,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   EntrarRoute: typeof EntrarRoute
   LojistasRoute: typeof LojistasRoute
@@ -154,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/como-funciona': {
@@ -191,6 +231,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/minhas-consultas': {
+      id: '/_authenticated/minhas-consultas'
+      path: '/minhas-consultas'
+      fullPath: '/minhas-consultas'
+      preLoaderRoute: typeof AuthenticatedMinhasConsultasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/consulta/$placa': {
       id: '/consulta/$placa'
       path: '/consulta/$placa'
@@ -215,8 +269,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedMinhasConsultasRoute: typeof AuthenticatedMinhasConsultasRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedMinhasConsultasRoute: AuthenticatedMinhasConsultasRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ComoFuncionaRoute: ComoFuncionaRoute,
   EntrarRoute: EntrarRoute,
   LojistasRoute: LojistasRoute,
