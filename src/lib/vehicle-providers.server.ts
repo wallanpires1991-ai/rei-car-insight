@@ -75,8 +75,9 @@ const providers: Provider[] = [
       const endpoints = (
         process.env["INFOSIMPLES_ENDPOINT"] ??
         [
+          // Nacional (recomendado) → estaduais como fallback.
+          "https://api.infosimples.com/api/v2/consultas/senatran/veiculo",
           "https://api.infosimples.com/api/v2/consultas/sinesp/veiculo",
-          "https://api.infosimples.com/api/v2/consultas/detran/sp/veiculo",
         ].join(",")
       )
         .split(",")
