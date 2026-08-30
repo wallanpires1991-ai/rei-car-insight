@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as LojistasRouteImport } from './routes/lojistas'
+import { Route as OQueConsultamosRouteImport } from './routes/o-que-consultamos'
+import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as ConsultaPlacaRouteImport } from './routes/consulta.$placa'
+import { Route as LegalDocRouteImport } from './routes/legal.$doc'
+import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
+  id: '/como-funciona',
+  path: '/como-funciona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LojistasRoute = LojistasRouteImport.update({
+  id: '/lojistas',
+  path: '/lojistas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OQueConsultamosRoute = OQueConsultamosRouteImport.update({
+  id: '/o-que-consultamos',
+  path: '/o-que-consultamos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsultaPlacaRoute = ConsultaPlacaRouteImport.update({
+  id: '/consulta/$placa',
+  path: '/consulta/$placa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalDocRoute = LegalDocRouteImport.update({
+  id: '/legal/$doc',
+  path: '/legal/$doc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerificarCodigoRoute = VerificarCodigoRouteImport.update({
+  id: '/verificar/$codigo',
+  path: '/verificar/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/lojistas': typeof LojistasRoute
+  '/o-que-consultamos': typeof OQueConsultamosRoute
+  '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
+  '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/lojistas': typeof LojistasRoute
+  '/o-que-consultamos': typeof OQueConsultamosRoute
+  '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
+  '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/lojistas': typeof LojistasRoute
+  '/o-que-consultamos': typeof OQueConsultamosRoute
+  '/planos': typeof PlanosRoute
+  '/consulta/$placa': typeof ConsultaPlacaRoute
+  '/legal/$doc': typeof LegalDocRoute
+  '/verificar/$codigo': typeof VerificarCodigoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/lojistas'
+    | '/o-que-consultamos'
+    | '/planos'
+    | '/consulta/$placa'
+    | '/legal/$doc'
+    | '/verificar/$codigo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/lojistas'
+    | '/o-que-consultamos'
+    | '/planos'
+    | '/consulta/$placa'
+    | '/legal/$doc'
+    | '/verificar/$codigo'
+  id:
+    | '__root__'
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/lojistas'
+    | '/o-que-consultamos'
+    | '/planos'
+    | '/consulta/$placa'
+    | '/legal/$doc'
+    | '/verificar/$codigo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComoFuncionaRoute: typeof ComoFuncionaRoute
+  EntrarRoute: typeof EntrarRoute
+  LojistasRoute: typeof LojistasRoute
+  OQueConsultamosRoute: typeof OQueConsultamosRoute
+  PlanosRoute: typeof PlanosRoute
+  ConsultaPlacaRoute: typeof ConsultaPlacaRoute
+  LegalDocRoute: typeof LegalDocRoute
+  VerificarCodigoRoute: typeof VerificarCodigoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/como-funciona': {
+      id: '/como-funciona'
+      path: '/como-funciona'
+      fullPath: '/como-funciona'
+      preLoaderRoute: typeof ComoFuncionaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lojistas': {
+      id: '/lojistas'
+      path: '/lojistas'
+      fullPath: '/lojistas'
+      preLoaderRoute: typeof LojistasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/o-que-consultamos': {
+      id: '/o-que-consultamos'
+      path: '/o-que-consultamos'
+      fullPath: '/o-que-consultamos'
+      preLoaderRoute: typeof OQueConsultamosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consulta/$placa': {
+      id: '/consulta/$placa'
+      path: '/consulta/$placa'
+      fullPath: '/consulta/$placa'
+      preLoaderRoute: typeof ConsultaPlacaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/$doc': {
+      id: '/legal/$doc'
+      path: '/legal/$doc'
+      fullPath: '/legal/$doc'
+      preLoaderRoute: typeof LegalDocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verificar/$codigo': {
+      id: '/verificar/$codigo'
+      path: '/verificar/$codigo'
+      fullPath: '/verificar/$codigo'
+      preLoaderRoute: typeof VerificarCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComoFuncionaRoute: ComoFuncionaRoute,
+  EntrarRoute: EntrarRoute,
+  LojistasRoute: LojistasRoute,
+  OQueConsultamosRoute: OQueConsultamosRoute,
+  PlanosRoute: PlanosRoute,
+  ConsultaPlacaRoute: ConsultaPlacaRoute,
+  LegalDocRoute: LegalDocRoute,
+  VerificarCodigoRoute: VerificarCodigoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
