@@ -57,18 +57,36 @@ function ConsultaPage() {
 
   const [stage, setStage] = useState<Stage>("paywall");
   const [step, setStep] = useState(0);
+  const [resposta, setResposta] = useState<ConsultaResposta | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
 
-  const report = useMemo(() => (valid ? buildDemoReport(plate) : null), [plate, valid]);
+  const consultar = useServerFn(consultarPlaca);
 
   useEffect(() => {
     if (stage !== "loading") return;
-    if (step >= STEPS.length) {
-      const t = setTimeout(() => setStage("done"), 500);
-      return () => clearTimeout(t);
-    }
+    if (step >= STEPS.length) return;
     const t = setTimeout(() => setStep((s) => s + 1), 600);
     return () => clearTimeout(t);
   }, [stage, step]);
+
+  useEffect(() => {
+    if (stage !== "loading" || resposta || erro) return;
+    let cancelled = false;
+    consultar({ data: { placa: plate } })
+      .then((r) => {
+        if (!cancelled) setResposta(r);
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setErro(e instanceof Error ? e.message : "Falha ao consultar.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, plate, consultar, resposta, erro]);
+
+  useEffect(() => {
+    if (stage === "loading" && resposta && step >= STEPS.length) setStage("done");
+  }, [stage, resposta, step]);
 
   if (!valid) {
     return (
