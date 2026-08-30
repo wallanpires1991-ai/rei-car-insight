@@ -267,6 +267,9 @@ function ReportView({ report, resposta }: { report: VehicleReport; resposta: Con
           </ReportSection>
 
           <ReportSection index={3} title="Histórico do veículo">
+            {report.history.length === 0 && (
+              <p className="text-sm text-muted-foreground/70 italic">{UNAVAILABLE}</p>
+            )}
             <ul className="space-y-4">
               {report.history.map((h) => (
                 <li key={h.title} className="border-l-2 border-primary/40 pl-4">
