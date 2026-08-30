@@ -65,10 +65,10 @@ const COLORS = ["Preta", "Prata", "Branca", "Cinza", "Vermelha", "Azul"];
 export function buildDemoReport(plateInput: string): VehicleReport {
   const plateRaw = normalizePlate(plateInput);
   const h = hash(plateRaw);
-  const pick = <T,>(arr: T[], salt: number): T => arr[(h >> salt) % arr.length];
+  const pick = <T,>(arr: T[], salt: number): T => arr[(h >> salt) % arr.length] as T;
 
   const car = pick(MODELS, 2);
-  const [city, uf] = pick(CITIES, 5);
+  const [city, uf] = pick(CITIES, 5) as [string, string];
   const year = 2015 + (h % 10);
   const hasAuction = h % 7 === 0;
   const damageLevel = h % 11 === 0 ? "critical" : h % 5 === 0 ? "warn" : "ok";
