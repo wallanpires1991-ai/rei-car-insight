@@ -45,22 +45,22 @@ export function Footer() {
           <h4 className="text-xs tracking-[0.16em] text-gold uppercase">Legal</h4>
           <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
             <li>
-              <Link to="/legal/termos" className="hover:text-foreground">
+              <Link to="/legal/$doc" params={{ doc: "termos" }} className="hover:text-foreground">
                 Termos de Uso
               </Link>
             </li>
             <li>
-              <Link to="/legal/privacidade" className="hover:text-foreground">
+              <Link to="/legal/$doc" params={{ doc: "privacidade" }} className="hover:text-foreground">
                 Política de Privacidade
               </Link>
             </li>
             <li>
-              <Link to="/legal/lgpd" className="hover:text-foreground">
+              <Link to="/legal/$doc" params={{ doc: "lgpd" }} className="hover:text-foreground">
                 LGPD
               </Link>
             </li>
             <li>
-              <Link to="/legal/aviso" className="hover:text-foreground">
+              <Link to="/legal/$doc" params={{ doc: "aviso" }} className="hover:text-foreground">
                 Aviso Legal
               </Link>
             </li>
