@@ -67,18 +67,47 @@ const providers: Provider[] = [
   },
   {
     slug: "infosimples",
-    priority: 20,
+    // Provedor principal: token contratado pelo cliente.
+    priority: 5,
     isConfigured: () => Boolean(process.env["INFOSIMPLES_TOKEN"]),
     fetch: async (plate) => {
-      const endpoint =
+      const token = process.env["INFOSIMPLES_TOKEN"]!;
+      const endpoints = (
         process.env["INFOSIMPLES_ENDPOINT"] ??
-        "https://api.infosimples.com/api/v2/consultas/detran/sp/veiculo";
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: process.env["INFOSIMPLES_TOKEN"], placa: plate, timeout: 60 }),
-      });
-      return readJson(res);
+        [
+          // Nacional (recomendado) → estaduais como fallback.
+          "https://api.infosimples.com/api/v2/consultas/senatran/veiculo",
+          "https://api.infosimples.com/api/v2/consultas/sinesp/veiculo",
+        ].join(",")
+      )
+        .split(",")
+        .map((e) => e.trim())
+        .filter(Boolean);
+
+      const errors: string[] = [];
+      for (const endpoint of endpoints) {
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, placa: plate, timeout: 60 }),
+          });
+          const json = await readJson(res);
+          const code = Number(json["code"] ?? 200);
+          // 200 = sucesso; 6xx = sucesso parcial/sem dados; demais = erro.
+          if (code !== 200) {
+            throw new Error(`code ${code}: ${String(json["code_message"] ?? "erro Infosimples")}`);
+          }
+          const payload = Array.isArray(json["data"]) ? json["data"][0] : json["data"];
+          if (payload && typeof payload === "object") {
+            return payload as Record<string, unknown>;
+          }
+          throw new Error("resposta sem dados");
+        } catch (error) {
+          errors.push(`${endpoint}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+      }
+      throw new Error(errors.join(" | "));
     },
   },
   {

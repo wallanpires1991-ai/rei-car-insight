@@ -63,13 +63,20 @@ export const consultarPlaca = createServerFn({ method: "POST" })
     } catch (error) {
       const isNotConfigured =
         error instanceof Error && error.message === "NENHUM_PROVEDOR_CONFIGURADO";
+      const details =
+        error && typeof error === "object" && "details" in error
+          ? String((error as { details: unknown }).details)
+          : "";
+      const notEnabled = /não habilitada|nao habilitada|603/.test(details);
       resposta = {
         report: buildDemoReport(placa),
         fonte: "demo",
         provedor: null,
         aviso: isNotConfigured
           ? "Nenhum provedor de dados veiculares está configurado. Este relatório é uma DEMONSTRAÇÃO."
-          : "Os provedores licenciados não responderam. Este relatório é uma DEMONSTRAÇÃO.",
+          : notEnabled
+            ? "Token Infosimples válido, mas a consulta de veículos ainda não está habilitada na sua conta. Solicite a liberação do serviço 'senatran/veiculo' no painel da Infosimples. Enquanto isso, este relatório é uma DEMONSTRAÇÃO."
+            : "Os provedores licenciados não responderam. Este relatório é uma DEMONSTRAÇÃO.",
       };
       resposta.report.code = codigo;
       if (!isNotConfigured) console.error(error);
