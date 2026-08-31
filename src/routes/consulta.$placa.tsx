@@ -155,12 +155,8 @@ function ConsultaPage() {
     return (
       <PageShell>
         <div className="mx-auto flex min-h-[60vh] max-w-xl items-center px-4 py-12">
-          <Dialog open>
-            <DialogContent
-              className="max-w-md"
-              onInteractOutside={(e) => e.preventDefault()}
-              onEscapeKeyDown={(e) => e.preventDefault()}
-            >
+          <Dialog open onOpenChange={() => {}}>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-warning/10">
                   <Scale className="size-6 text-warning" />
