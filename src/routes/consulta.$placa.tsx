@@ -183,17 +183,64 @@ function ConsultaPage() {
             </p>
             <div className="mt-5 font-display text-4xl font-extrabold text-gradient-neon">R$ 49,90</div>
 
+            {aviso && (
+              <p className="mt-4 flex items-center justify-center gap-2 rounded-lg border border-warning/40 bg-warning/5 px-4 py-3 text-xs text-warning">
+                <AlertTriangle className="size-4 shrink-0" /> {aviso}
+              </p>
+            )}
+
             <button
-              onClick={() => setStage("lgpd")}
-              className="mt-7 w-full rounded-lg bg-neon px-5 py-4 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5"
+              onClick={iniciarPagamento}
+              disabled={pagando}
+              className="mt-7 w-full rounded-lg bg-neon px-5 py-4 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              Fazer consulta completa — R$49,90
+              {pagando ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="size-4 animate-spin" /> Abrindo pagamento seguro...
+                </span>
+              ) : (
+                "Pagar e consultar — R$49,90"
+              )}
             </button>
             <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. A consulta é registrada no
-              seu histórico e validada por código único.
+              <Lock className="size-3.5 text-primary" /> Pagamento processado pelo Mercado Pago: PIX, crédito
+              e débito. Após pagar, você volta aqui e o relatório é liberado.
             </p>
           </div>
+        </div>
+      </PageShell>
+    );
+  }
+
+  if (stage === "aguardando") {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl px-4 py-24 text-center">
+          <Loader2 className="mx-auto size-8 animate-spin text-primary" />
+          <h1 className="mt-4 text-2xl font-bold">Confirmando seu pagamento</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Estamos verificando a confirmação junto ao Mercado Pago...
+          </p>
+          {aviso && (
+            <div className="panel mt-6 p-6">
+              <p className="text-sm text-warning">{aviso}</p>
+              <button
+                onClick={() => {
+                  setAviso(null);
+                  verificar({ data: { placa: plate } }).then((r) => {
+                    if (r.pago) setStage("lgpd");
+                    else
+                      setAviso(
+                        "Pagamento ainda não confirmado. Se você pagou via PIX, aguarde alguns instantes e tente novamente.",
+                      );
+                  });
+                }}
+                className="mt-4 rounded-lg bg-neon px-5 py-3 text-sm font-bold text-neon-foreground uppercase"
+              >
+                Já paguei — verificar novamente
+              </button>
+            </div>
+          )}
         </div>
       </PageShell>
     );
