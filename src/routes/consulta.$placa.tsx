@@ -151,6 +151,80 @@ function ConsultaPage() {
     );
   }
 
+  if (stage === "lgpd") {
+    return (
+      <PageShell>
+        <div className="mx-auto flex min-h-[60vh] max-w-xl items-center px-4 py-12">
+          <Dialog open>
+            <DialogContent
+              className="max-w-md"
+              onInteractOutside={(e) => e.preventDefault()}
+              onEscapeKeyDown={(e) => e.preventDefault()}
+            >
+              <DialogHeader>
+                <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-warning/10">
+                  <Scale className="size-6 text-warning" />
+                </div>
+                <DialogTitle className="mt-4 text-center font-display text-lg font-bold uppercase">
+                  Termo de responsabilidade
+                </DialogTitle>
+                <DialogDescription className="text-center">
+                  Antes de liberar o relatório completo, você precisa confirmar que entende as regras de uso
+                  dos dados.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 rounded-xl border border-warning/30 bg-warning/5 p-4 text-sm text-foreground/90">
+                <p>
+                  Os dados deste relatório são <strong>informações pessoais e sensíveis</strong>, protegidas
+                  pela <strong>Lei Geral de Proteção de Dados (LGPD)</strong>.
+                </p>
+                <ul className="list-disc space-y-1.5 pl-4 text-muted-foreground">
+                  <li>
+                    Você declara ser o titular dos dados ou possuir autorização legal para consultar esta
+                    placa.
+                  </li>
+                  <li>
+                    As informações serão usadas exclusivamente para análise da negociação do veículo.
+                  </li>
+                  <li>
+                    É proibido compartilhar, vender, publicar ou usar os dados para qualquer outro fim.
+                  </li>
+                  <li>
+                    O uso indevido pode gerar <strong>responsabilização civil e criminal</strong>, incluindo
+                    processos por violação de privacidade.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex items-start gap-3 pt-2">
+                <Checkbox
+                  id="lgpd-accept"
+                  checked={lgpdChecked}
+                  onCheckedChange={(v) => setLgpdChecked(v === true)}
+                />
+                <Label htmlFor="lgpd-accept" className="cursor-pointer text-sm leading-snug text-foreground/90">
+                  Li e entendo que devo preservar os dados obtidos, sob pena de responder a processos por
+                  violação da LGPD.
+                </Label>
+              </div>
+
+              <DialogFooter className="pt-2">
+                <button
+                  disabled={!lgpdChecked}
+                  onClick={() => setStage("loading")}
+                  className="w-full rounded-lg bg-neon px-5 py-3 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                >
+                  Li e concordo — prosseguir
+                </button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </PageShell>
+    );
+  }
+
   if (stage === "loading") {
     return (
       <PageShell>
