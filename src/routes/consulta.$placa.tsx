@@ -8,6 +8,7 @@ import {
   Loader2,
   Lock,
   QrCode,
+  Scale,
   ShieldCheck,
   Siren,
   TrendingUp,
@@ -16,6 +17,16 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { PageShell } from "@/components/site/PageShell";
 import { DataGrid, ReportSection, SeverityPill, toneClasses } from "@/components/report/ui";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { formatPlate, isValidPlate, normalizePlate } from "@/lib/plate";
 import { scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
 import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions";
