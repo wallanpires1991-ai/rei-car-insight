@@ -40,6 +40,26 @@ export const consultarPlaca = createServerFn({ method: "POST" })
       userId = userData.user?.id ?? null;
     }
 
+    // Exige pagamento aprovado para a placa. Administradores têm acesso livre.
+    let liberado = false;
+    if (userId) {
+      const { data: isAdmin } = await supabaseAdmin.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      liberado = Boolean(isAdmin);
+    }
+    if (!liberado) {
+      const { data: pag } = await supabaseAdmin
+        .from("pagamentos")
+        .select("id")
+        .eq("placa", placa)
+        .eq("status", "approved")
+        .limit(1)
+        .maybeSingle();
+      if (!pag) throw new Error("PAGAMENTO_PENDENTE");
+    }
+
     const providers = await import("./vehicle-providers.server");
 
     let resposta: ConsultaResposta;

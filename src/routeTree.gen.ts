@@ -21,6 +21,7 @@ import { Route as AuthenticatedMinhasConsultasRouteImport } from './routes/_auth
 import { Route as ConsultaPlacaRouteImport } from './routes/consulta.$placa'
 import { Route as LegalDocRouteImport } from './routes/legal.$doc'
 import { Route as VerificarCodigoRouteImport } from './routes/verificar.$codigo'
+import { Route as ApiPublicWebhooksMercadopagoRouteImport } from './routes/api/public/webhooks/mercadopago'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,12 @@ const VerificarCodigoRoute = VerificarCodigoRouteImport.update({
   path: '/verificar/$codigo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksMercadopagoRoute =
+  ApiPublicWebhooksMercadopagoRouteImport.update({
+    id: '/api/public/webhooks/mercadopago',
+    path: '/api/public/webhooks/mercadopago',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -108,6 +116,7 @@ export interface FileRoutesByTo {
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,6 +132,7 @@ export interface FileRoutesById {
   '/consulta/$placa': typeof ConsultaPlacaRoute
   '/legal/$doc': typeof LegalDocRoute
   '/verificar/$codigo': typeof VerificarCodigoRoute
+  '/api/public/webhooks/mercadopago': typeof ApiPublicWebhooksMercadopagoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
+    | '/api/public/webhooks/mercadopago'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
+    | '/api/public/webhooks/mercadopago'
   id:
     | '__root__'
     | '/'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
     | '/consulta/$placa'
     | '/legal/$doc'
     | '/verificar/$codigo'
+    | '/api/public/webhooks/mercadopago'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,6 +191,7 @@ export interface RootRouteChildren {
   ConsultaPlacaRoute: typeof ConsultaPlacaRoute
   LegalDocRoute: typeof LegalDocRoute
   VerificarCodigoRoute: typeof VerificarCodigoRoute
+  ApiPublicWebhooksMercadopagoRoute: typeof ApiPublicWebhooksMercadopagoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -266,6 +280,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerificarCodigoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/mercadopago': {
+      id: '/api/public/webhooks/mercadopago'
+      path: '/api/public/webhooks/mercadopago'
+      fullPath: '/api/public/webhooks/mercadopago'
+      preLoaderRoute: typeof ApiPublicWebhooksMercadopagoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -293,6 +314,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsultaPlacaRoute: ConsultaPlacaRoute,
   LegalDocRoute: LegalDocRoute,
   VerificarCodigoRoute: VerificarCodigoRoute,
+  ApiPublicWebhooksMercadopagoRoute: ApiPublicWebhooksMercadopagoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
