@@ -8,6 +8,13 @@
       "when": 1788116974987,
       "tag": "0000_pesquisa_do_rei_core",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788181817299,
+      "tag": "0001_create_pagamentos",
+      "breakpoints": true
     }
   ]
 }

@@ -30,8 +30,13 @@ import { Label } from "@/components/ui/label";
 import { formatPlate, isValidPlate, normalizePlate } from "@/lib/plate";
 import { scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
 import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions";
+import { criarPagamento, verificarPagamento } from "@/lib/pagamento.functions";
 
 export const Route = createFileRoute("/consulta/$placa")({
+  validateSearch: (search: Record<string, unknown>): { pagamento?: string } => {
+    const p = search["pagamento"];
+    return typeof p === "string" ? { pagamento: p } : {};
+  },
   head: ({ params }) => {
     const t = `Consulta da placa ${formatPlate(params.placa)} — Pesquisa do Rei 👑`;
     return {
@@ -59,10 +64,11 @@ const STEPS = [
   "Preparando o Veredito do Rei",
 ];
 
-type Stage = "paywall" | "lgpd" | "loading" | "done";
+type Stage = "paywall" | "aguardando" | "lgpd" | "loading" | "done";
 
 function ConsultaPage() {
   const { placa } = Route.useParams();
+  const { pagamento } = Route.useSearch();
   const plate = normalizePlate(placa);
   const valid = isValidPlate(plate);
 
@@ -70,9 +76,44 @@ function ConsultaPage() {
   const [step, setStep] = useState(0);
   const [resposta, setResposta] = useState<ConsultaResposta | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [lgpdChecked, setLgpdChecked] = useState(false);
+  const [pagando, setPagando] = useState(false);
 
   const consultar = useServerFn(consultarPlaca);
+  const pagar = useServerFn(criarPagamento);
+  const verificar = useServerFn(verificarPagamento);
+
+  // Retorno do checkout do Mercado Pago: confirma o pagamento antes de liberar.
+  useEffect(() => {
+    if (pagamento !== "retorno" || !valid) return;
+    let cancelled = false;
+    setStage("aguardando");
+    verificar({ data: { placa: plate } })
+      .then((r) => {
+        if (cancelled) return;
+        if (r.pago) setStage("lgpd");
+        else setAviso("Pagamento ainda não confirmado. Se você pagou via PIX, aguarde alguns instantes e tente novamente.");
+      })
+      .catch(() => {
+        if (!cancelled) setAviso("Não foi possível confirmar o pagamento agora. Tente novamente em instantes.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pagamento, valid, plate, verificar]);
+
+  async function iniciarPagamento() {
+    setPagando(true);
+    setAviso(null);
+    try {
+      const r = await pagar({ data: { placa: plate } });
+      window.location.href = r.url;
+    } catch (e) {
+      setAviso(e instanceof Error ? e.message : "Falha ao iniciar o pagamento.");
+      setPagando(false);
+    }
+  }
 
   useEffect(() => {
     if (stage !== "loading") return;
@@ -89,7 +130,14 @@ function ConsultaPage() {
         if (!cancelled) setResposta(r);
       })
       .catch((e: unknown) => {
-        if (!cancelled) setErro(e instanceof Error ? e.message : "Falha ao consultar.");
+        if (cancelled) return;
+        const msg = e instanceof Error ? e.message : "Falha ao consultar.";
+        if (msg.includes("PAGAMENTO_PENDENTE")) {
+          setStage("paywall");
+          setAviso("Pagamento não confirmado para esta placa. Conclua o pagamento para liberar o relatório.");
+        } else {
+          setErro(msg);
+        }
       });
     return () => {
       cancelled = true;
@@ -135,17 +183,64 @@ function ConsultaPage() {
             </p>
             <div className="mt-5 font-display text-4xl font-extrabold text-gradient-neon">R$ 49,90</div>
 
+            {aviso && (
+              <p className="mt-4 flex items-center justify-center gap-2 rounded-lg border border-warning/40 bg-warning/5 px-4 py-3 text-xs text-warning">
+                <AlertTriangle className="size-4 shrink-0" /> {aviso}
+              </p>
+            )}
+
             <button
-              onClick={() => setStage("lgpd")}
-              className="mt-7 w-full rounded-lg bg-neon px-5 py-4 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5"
+              onClick={iniciarPagamento}
+              disabled={pagando}
+              className="mt-7 w-full rounded-lg bg-neon px-5 py-4 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              Fazer consulta completa — R$49,90
+              {pagando ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="size-4 animate-spin" /> Abrindo pagamento seguro...
+                </span>
+              ) : (
+                "Pagar e consultar — R$49,90"
+              )}
             </button>
             <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Lock className="size-3.5 text-primary" /> PIX, crédito e débito. A consulta é registrada no
-              seu histórico e validada por código único.
+              <Lock className="size-3.5 text-primary" /> Pagamento processado pelo Mercado Pago: PIX, crédito
+              e débito. Após pagar, você volta aqui e o relatório é liberado.
             </p>
           </div>
+        </div>
+      </PageShell>
+    );
+  }
+
+  if (stage === "aguardando") {
+    return (
+      <PageShell>
+        <div className="mx-auto max-w-xl px-4 py-24 text-center">
+          <Loader2 className="mx-auto size-8 animate-spin text-primary" />
+          <h1 className="mt-4 text-2xl font-bold">Confirmando seu pagamento</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Estamos verificando a confirmação junto ao Mercado Pago...
+          </p>
+          {aviso && (
+            <div className="panel mt-6 p-6">
+              <p className="text-sm text-warning">{aviso}</p>
+              <button
+                onClick={() => {
+                  setAviso(null);
+                  verificar({ data: { placa: plate } }).then((r) => {
+                    if (r.pago) setStage("lgpd");
+                    else
+                      setAviso(
+                        "Pagamento ainda não confirmado. Se você pagou via PIX, aguarde alguns instantes e tente novamente.",
+                      );
+                  });
+                }}
+                className="mt-4 rounded-lg bg-neon px-5 py-3 text-sm font-bold text-neon-foreground uppercase"
+              >
+                Já paguei — verificar novamente
+              </button>
+            </div>
+          )}
         </div>
       </PageShell>
     );
