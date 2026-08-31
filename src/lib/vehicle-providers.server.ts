@@ -46,6 +46,15 @@ async function readJson(res: Response): Promise<Record<string, unknown>> {
   }
 }
 
+/**
+ * Token da API veicular. Lido SOMENTE no servidor, a partir dos Secrets.
+ * Nome oficial: VEICULAR_API_TOKEN (INFOSIMPLES_TOKEN é aceito por compatibilidade).
+ * Nunca é retornado ao frontend nem registrado em logs.
+ */
+function veicularToken(): string | undefined {
+  return process.env["VEICULAR_API_TOKEN"] || process.env["INFOSIMPLES_TOKEN"] || undefined;
+}
+
 const providers: Provider[] = [
   {
     slug: "apibrasil",
@@ -69,9 +78,9 @@ const providers: Provider[] = [
     slug: "infosimples",
     // Provedor principal: token contratado pelo cliente.
     priority: 5,
-    isConfigured: () => Boolean(process.env["INFOSIMPLES_TOKEN"]),
+    isConfigured: () => Boolean(veicularToken()),
     fetch: async (plate) => {
-      const token = process.env["INFOSIMPLES_TOKEN"]!;
+      const token = veicularToken()!;
       const endpoints = (
         process.env["INFOSIMPLES_ENDPOINT"] ??
         [
