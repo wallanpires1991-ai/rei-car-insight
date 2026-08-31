@@ -59,6 +59,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pagamentos: {
+        Row: {
+          created_at: string
+          id: string
+          metodo: string | null
+          payment_id: string | null
+          placa: string
+          preference_id: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          valor_centavos: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metodo?: string | null
+          payment_id?: string | null
+          placa: string
+          preference_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          valor_centavos?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metodo?: string | null
+          payment_id?: string | null
+          placa?: string
+          preference_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          valor_centavos?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
