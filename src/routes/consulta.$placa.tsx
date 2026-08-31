@@ -30,8 +30,12 @@ import { Label } from "@/components/ui/label";
 import { formatPlate, isValidPlate, normalizePlate } from "@/lib/plate";
 import { scoreBand, UNAVAILABLE, type VehicleReport } from "@/lib/report";
 import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions";
+import { criarPagamento, verificarPagamento } from "@/lib/pagamento.functions";
 
 export const Route = createFileRoute("/consulta/$placa")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    pagamento: (search["pagamento"] as string | undefined) ?? undefined,
+  }),
   head: ({ params }) => {
     const t = `Consulta da placa ${formatPlate(params.placa)} — Pesquisa do Rei 👑`;
     return {
