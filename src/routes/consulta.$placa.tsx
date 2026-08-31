@@ -59,7 +59,7 @@ const STEPS = [
   "Preparando o Veredito do Rei",
 ];
 
-type Stage = "paywall" | "loading" | "done";
+type Stage = "paywall" | "lgpd" | "loading" | "done";
 
 function ConsultaPage() {
   const { placa } = Route.useParams();
