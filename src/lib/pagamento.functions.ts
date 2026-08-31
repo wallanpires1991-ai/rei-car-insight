@@ -8,18 +8,22 @@ const PRECO_CENTAVOS = 4990;
 
 const placaSchema = z.object({ placa: z.string().trim().min(7).max(10) });
 
+const PUBLIC_URL = "https://rei-car-insight.lovable.app";
+
 function baseUrl(): string {
+  // O Mercado Pago exige URL pública para retorno/webhook; localhost usa a publicada.
   const origin = getRequestHeader("origin") ?? getRequestHeader("referer");
   if (origin) {
     try {
-      return new URL(origin).origin;
+      const u = new URL(origin);
+      if (!u.hostname.includes("localhost") && !u.hostname.startsWith("127.")) return u.origin;
     } catch {
       // ignora e usa fallback
     }
   }
   const host = getRequestHeader("x-forwarded-host") ?? getRequestHeader("host");
-  if (host) return `https://${host}`;
-  return "https://rei-car-insight.lovable.app";
+  if (host && !host.includes("localhost")) return `https://${host}`;
+  return PUBLIC_URL;
 }
 
 async function mpFetch(path: string, init?: RequestInit): Promise<Record<string, unknown>> {
