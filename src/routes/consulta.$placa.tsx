@@ -64,10 +64,11 @@ const STEPS = [
   "Preparando o Veredito do Rei",
 ];
 
-type Stage = "paywall" | "lgpd" | "loading" | "done";
+type Stage = "paywall" | "aguardando" | "lgpd" | "loading" | "done";
 
 function ConsultaPage() {
   const { placa } = Route.useParams();
+  const { pagamento } = Route.useSearch();
   const plate = normalizePlate(placa);
   const valid = isValidPlate(plate);
 
@@ -75,9 +76,44 @@ function ConsultaPage() {
   const [step, setStep] = useState(0);
   const [resposta, setResposta] = useState<ConsultaResposta | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [lgpdChecked, setLgpdChecked] = useState(false);
+  const [pagando, setPagando] = useState(false);
 
   const consultar = useServerFn(consultarPlaca);
+  const pagar = useServerFn(criarPagamento);
+  const verificar = useServerFn(verificarPagamento);
+
+  // Retorno do checkout do Mercado Pago: confirma o pagamento antes de liberar.
+  useEffect(() => {
+    if (pagamento !== "retorno" || !valid) return;
+    let cancelled = false;
+    setStage("aguardando");
+    verificar({ data: { placa: plate } })
+      .then((r) => {
+        if (cancelled) return;
+        if (r.pago) setStage("lgpd");
+        else setAviso("Pagamento ainda não confirmado. Se você pagou via PIX, aguarde alguns instantes e tente novamente.");
+      })
+      .catch(() => {
+        if (!cancelled) setAviso("Não foi possível confirmar o pagamento agora. Tente novamente em instantes.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pagamento, valid, plate, verificar]);
+
+  async function iniciarPagamento() {
+    setPagando(true);
+    setAviso(null);
+    try {
+      const r = await pagar({ data: { placa: plate } });
+      window.location.href = r.url;
+    } catch (e) {
+      setAviso(e instanceof Error ? e.message : "Falha ao iniciar o pagamento.");
+      setPagando(false);
+    }
+  }
 
   useEffect(() => {
     if (stage !== "loading") return;
@@ -94,7 +130,14 @@ function ConsultaPage() {
         if (!cancelled) setResposta(r);
       })
       .catch((e: unknown) => {
-        if (!cancelled) setErro(e instanceof Error ? e.message : "Falha ao consultar.");
+        if (cancelled) return;
+        const msg = e instanceof Error ? e.message : "Falha ao consultar.";
+        if (msg.includes("PAGAMENTO_PENDENTE")) {
+          setStage("paywall");
+          setAviso("Pagamento não confirmado para esta placa. Conclua o pagamento para liberar o relatório.");
+        } else {
+          setErro(msg);
+        }
       });
     return () => {
       cancelled = true;
