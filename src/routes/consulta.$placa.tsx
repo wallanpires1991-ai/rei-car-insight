@@ -33,8 +33,8 @@ import { consultarPlaca, type ConsultaResposta } from "@/lib/consulta.functions"
 import { criarPagamento, verificarPagamento } from "@/lib/pagamento.functions";
 
 export const Route = createFileRoute("/consulta/$placa")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    pagamento: (search["pagamento"] as string | undefined) ?? undefined,
+  validateSearch: (search: Record<string, unknown>): { pagamento?: string } => ({
+    pagamento: search["pagamento"] as string | undefined,
   }),
   head: ({ params }) => {
     const t = `Consulta da placa ${formatPlate(params.placa)} — Pesquisa do Rei 👑`;
