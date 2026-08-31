@@ -135,7 +135,7 @@ function ConsultaPage() {
             <div className="mt-5 font-display text-4xl font-extrabold text-gradient-neon">R$ 49,90</div>
 
             <button
-              onClick={() => setStage("loading")}
+              onClick={() => setStage("lgpd")}
               className="mt-7 w-full rounded-lg bg-neon px-5 py-4 text-sm font-bold tracking-wide text-neon-foreground uppercase shadow-glow transition-transform hover:-translate-y-0.5"
             >
               Fazer consulta completa — R$49,90
