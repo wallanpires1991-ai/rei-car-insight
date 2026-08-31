@@ -69,9 +69,9 @@ const providers: Provider[] = [
     slug: "infosimples",
     // Provedor principal: token contratado pelo cliente.
     priority: 5,
-    isConfigured: () => Boolean(process.env["INFOSIMPLES_TOKEN"]),
+    isConfigured: () => Boolean(veicularToken()),
     fetch: async (plate) => {
-      const token = process.env["INFOSIMPLES_TOKEN"]!;
+      const token = veicularToken()!;
       const endpoints = (
         process.env["INFOSIMPLES_ENDPOINT"] ??
         [
