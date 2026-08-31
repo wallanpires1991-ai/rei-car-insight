@@ -70,6 +70,7 @@ function ConsultaPage() {
   const [step, setStep] = useState(0);
   const [resposta, setResposta] = useState<ConsultaResposta | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [lgpdChecked, setLgpdChecked] = useState(false);
 
   const consultar = useServerFn(consultarPlaca);
 
